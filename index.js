@@ -1,18 +1,21 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const app = express();
 const port = 5000;
 const cors = require("cors");
 const multer = require("multer");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 mongoose
-  .connect('mongodb://127.0.0.1:27017/barberia')
+  .connect("mongodb://127.0.0.1:27017/barberia")
   .then((x) => {
-    console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`)
+    console.log(
+      `Connected to Mongo! Database name: "${x.connections[0].name}"`
+    );
   })
   .catch((err) => {
-    console.error('Error connecting to mongo', err.reason)
-  })
+    console.error("Error connecting to mongo", err.reason);
+  });
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -24,50 +27,56 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-app.use('/public', express.static('public'));
+app.use("/public", express.static("public"));
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-let Barbero = require("./models/barbero");
-app.post("/image", upload.single("file"), function (req, res) {
-  const url = req.protocol + "://" + req.get("host");
-  console.log(req.file);
-  console.log(url);
+const barberoR = require('./routes/barbero.routes');
+const citasR = require('./routes/citas.routes');
 
-  const barber = new Barbero({
+
+app.post("/create-barber", upload.single("file"), barberoR.create);
+
+app.get("/all-barberos",barberoR.allBarber);
+
+
+
+let Cita = require("./models/cita");
+app.post("/agendar-cita", (req, res) => {
+  console.log(req.body);
+
+  const cita = new Cita({
     _id: new mongoose.Types.ObjectId(),
     nombre: req.body.nombre,
     servicios: req.body.servicios,
-    rol: req.body.rol,
-    profileImg: url + "/public/images/" + req.file.filename,
+    barbero_id : new mongoose.Types.ObjectId(req.body.barbero),
+    hora : req.body.hora,
+    fecha : req.body.fecha,
+    estado : 'AGENDADA'
   });
-  barber
-    .save()
-    .then((result) => {
-      res.status(201).json({
-        message: "Barber registered successfully!",
-        userCreated: {
-          _id: result._id,
-          profileImg: result.profileImg,
-        },
-      });
-    })
-    .catch((err) => {
-      console.log(err),
-        res.status(500).json({
-          error: err,
-        });
+
+  cita.save()
+  .then((result) => {
+    res.status(201).json({
+      message: "Cita registered successfully!",
+      citaCreated: {
+        _id: result._id,
+        hora: result.hora
+      },
     });
-});
-
-app.get("/barberos",function (req, res) {
-Barbero.find().then(data => {
-  res.status(200).json({
-      barberos: data
+  })
+  .catch((err) => {
+    console.log(err),
+      res.status(500).json({
+        error: err,
+      });
   });
-})
-}
-
-);
+});
+app.get("/all-citas",citasR.allCitas);
+app.get("/citas-hoy",citasR.allCitasHoy);
+app.get("/citas-barbero/:id",citasR.allCitasBarbero);
+app.put('/update-cita/:id/:estado',citasR.editCitas)
 
 app.listen(port, () => {
   console.log(`listening at http://localhost:${port}`);
