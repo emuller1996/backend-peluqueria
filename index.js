@@ -34,6 +34,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const barberoR = require('./routes/barbero.routes');
 const citasR = require('./routes/citas.routes');
+const servciosR = require('./routes/servicios');
 
 
 app.post("/create-barber", upload.single("file"), barberoR.create);
@@ -41,18 +42,21 @@ app.post("/create-barber", upload.single("file"), barberoR.create);
 app.get("/all-barberos",barberoR.allBarber);
 
 
-
 let Cita = require("./models/cita");
-app.post("/agendar-cita", (req, res) => {
+app.post("/citas", (req, res) => {
   console.log(req.body);
+
+  const { nombre, servicios, barbero, hora, fecha } =  req.body;
+
+  if ( !nombre || !servicios ||  !barbero ||  !hora ||  !fecha  ) res.json({error : 'Parametros Faltantes'})
 
   const cita = new Cita({
     _id: new mongoose.Types.ObjectId(),
-    nombre: req.body.nombre,
-    servicios: req.body.servicios,
-    barbero_id : new mongoose.Types.ObjectId(req.body.barbero),
-    hora : req.body.hora,
-    fecha : req.body.fecha,
+    nombre: nombre,
+    servicios: servicios,
+    barbero_id : new mongoose.Types.ObjectId(barbero),
+    hora : hora,
+    fecha :fecha,
     estado : 'AGENDADA'
   });
 
@@ -60,10 +64,7 @@ app.post("/agendar-cita", (req, res) => {
   .then((result) => {
     res.status(201).json({
       message: "Cita registered successfully!",
-      citaCreated: {
-        _id: result._id,
-        hora: result.hora
-      },
+      citaCreated: result
     });
   })
   .catch((err) => {
@@ -74,10 +75,15 @@ app.post("/agendar-cita", (req, res) => {
   });
 });
 app.get("/all-citas",citasR.allCitas);
-app.get("/citas-hoy",citasR.allCitasHoy);
+app.get("/citas-hoy/:fecha",citasR.allCitasHoy);
 app.get("/citas-barbero/:id",citasR.allCitasBarbero);
-app.put('/update-cita/:id/:estado',citasR.editCitas)
+app.put('/update-cita/:id/:estado',citasR.editCitas);
+app.get('/citasDisponibleBarbero',citasR.citasDisponibleBarbero);
 
-app.listen(port, () => {
+
+app.post('/servicios',servciosR.createServicios);
+app.get('/servicios',servciosR.allServicios);
+
+app.listen(port,() => {
   console.log(`listening at http://localhost:${port}`);
 });

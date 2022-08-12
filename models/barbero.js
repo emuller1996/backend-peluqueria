@@ -8,7 +8,7 @@ const barberoSchema = new Schema({
         type: String
     },
     nombre: String,
-    servicios : String,
+    servicios : [{ type: Schema.Types.ObjectId, ref: 'Servicios' }],
     rol : String
 }, {
     collection: 'barberos'

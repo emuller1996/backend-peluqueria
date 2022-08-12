@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 const citaSchema = new Schema({
     _id: mongoose.Schema.Types.ObjectId, 
     nombre: String,
-    servicios : String,
-    barbero_id : [{ type: Schema.Types.ObjectId, ref: 'barberos' }],
+    servicios : [{ type: Schema.Types.ObjectId, ref: 'Servicios' }],
+    barbero_id : { type: Schema.Types.ObjectId, ref: 'Barbero' },
     fecha : Date,
     hora : String,
     estado : String

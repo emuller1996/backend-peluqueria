@@ -2,27 +2,33 @@ let express = require("express"),
   mongoose = require("mongoose");
 
 const Barbero = require("../models/barbero");
+
+
 exports.create = function (req, res) {
   const url = req.protocol + "://" + req.get("host");
   console.log(req.file);
-  console.log(url);
+  
+  const {nombre  , rol , servicios} = req.body;
+
+  console.log (servicios);
+
+  if ( !req.file)  res.status(422).json({error : 'Error!!! Imagen no cargada.'})
+  if ( !nombre  || !rol) res.status(422).json({error : 'Error Parametros Faltantes'})
+  
 
   const barber = new Barbero({
     _id: new mongoose.Types.ObjectId(),
-    nombre: req.body.nombre,
-    servicios: req.body.servicios,
-    rol: req.body.rol,
+    nombre: nombre,
+    rol:rol,
+    servicios : servicios,
     profileImg: url + "/public/images/" + req.file.filename,
   });
   barber
     .save()
     .then((result) => {
       res.status(201).json({
-        message: "Barber registered successfully!",
-        userCreated: {
-          _id: result._id,
-          profileImg: result.profileImg,
-        },
+        message: "Barber Registado Correctamente!",
+        barberoCreado: result
       });
     })
     .catch((err) => {
@@ -34,7 +40,9 @@ exports.create = function (req, res) {
 };
 
 exports.allBarber = function (req, res) {
-    Barbero.find().then((data) => {
+    Barbero.find()
+    .populate({path:'servicios'})
+    .then((data) => {
       res.status(200).json({
         barberos: data,
       });

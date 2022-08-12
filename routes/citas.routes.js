@@ -5,7 +5,10 @@ let Cita = require("../models/cita");
 let Barbero = require("../models/barbero");
 
 exports.allCitas = function (req, res) {
-  Cita.find().then((data) => {
+  Cita.find()
+  .populate('barbero_id','nombre')
+  .populate({path:'servicios' , select: ['nombre','precio']})
+  .then((data) => {
       res.status(200).json({
         citas: data
       });
@@ -15,16 +18,25 @@ exports.allCitas = function (req, res) {
 
 exports.allCitasHoy = function (req, res) {
   let no = new Date();
-  let str= `${no.toISOString().substring(0,10)}T00:00:00.000+00:00`;
+  let str= `${req.params.fecha}T00:00:00.000+00:00`;
  
-  var data = {}
+  console.log(req.params.fecha);
   Cita.find( { fecha : new Date( str ) } )
-  .then((data) => {
+  .populate('barbero_id','nombre')
+  .populate({path:'servicios' , select: ['nombre','precio']}).
+  exec(function (err, data) {
+    if (err) return handleError(err);
+      res.status(200).json({
+        citas: data
+      });
+    
+  });
+  /* .then((data) => {
     res.status(200).json({
       citas: data
     });
   })
-  .catch((err) => console.log(err));
+  .catch((err) => console.log(err)); */
 }
 
 exports.allCitasBarbero = function (req, res) {
@@ -35,6 +47,21 @@ exports.allCitasBarbero = function (req, res) {
     });
   })
   .catch((err) => console.log(err));
+
+}
+
+exports.citasDisponibleBarbero = function (req, res) {
+  const { barbero, fecha  } = req.body;
+
+  if ( !barbero || !fecha ) res.status(422).json({error : 'Error Parametros Faltantes'})
+
+  let str= `${fecha}T00:00:00.000+00:00`;
+
+  Cita.find( { barbero_id: barbero, fecha : new Date( str ) })
+  .then((data)=>{
+    res.json({cita  : data})
+  })
+
 
 }
 
