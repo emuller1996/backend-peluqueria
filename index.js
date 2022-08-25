@@ -43,37 +43,7 @@ app.get("/all-barberos",barberoR.allBarber);
 
 
 let Cita = require("./models/cita");
-app.post("/citas", (req, res) => {
-  console.log(req.body);
-
-  const { nombre, servicios, barbero, hora, fecha } =  req.body;
-
-  if ( !nombre || !servicios ||  !barbero ||  !hora ||  !fecha  ) res.json({error : 'Parametros Faltantes'})
-
-  const cita = new Cita({
-    _id: new mongoose.Types.ObjectId(),
-    nombre: nombre,
-    servicios: servicios,
-    barbero_id : new mongoose.Types.ObjectId(barbero),
-    hora : hora,
-    fecha :fecha,
-    estado : 'AGENDADA'
-  });
-
-  cita.save()
-  .then((result) => {
-    res.status(201).json({
-      message: "Cita registered successfully!",
-      citaCreated: result
-    });
-  })
-  .catch((err) => {
-    console.log(err),
-      res.status(500).json({
-        error: err,
-      });
-  });
-});
+app.post("/citas",citasR.createCita );
 app.get("/all-citas",citasR.allCitas);
 app.get("/citas-hoy/:fecha",citasR.allCitasHoy);
 app.get("/citas-barbero/:id",citasR.allCitasBarbero);

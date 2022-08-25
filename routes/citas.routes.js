@@ -1,8 +1,57 @@
 let express = require("express"),
   mongoose = require("mongoose");
 
+  const accountSid = 'AC5a4c993a9731237ea12d36854c23facf'; 
+const authToken = 'c829d1617988648f974da87c7c557ef1'; 
+const client = require('twilio')(accountSid, authToken); 
+ 
+
 let Cita = require("../models/cita");
 let Barbero = require("../models/barbero");
+
+exports.createCita = (req, res) => {
+  console.log(req.body);
+
+  const { nombre, servicios, barbero, hora, fecha, telefono } =  req.body;
+
+  if ( !nombre || !servicios ||  !barbero ||  !hora ||  !fecha  ) res.json({error : 'Parametros Faltantes'})
+
+  const cita = new Cita({
+    _id: new mongoose.Types.ObjectId(),
+    nombre: nombre,
+    servicios: servicios,
+    barbero_id : new mongoose.Types.ObjectId(barbero),
+    hora : hora,
+    fecha :fecha,
+    estado : 'AGENDADA',
+    telefono
+  });
+
+  cita.save()
+  .then((result) => {
+    res.status(201).json({
+      message: "Cita registered successfully!",
+      citaCreated: result
+    });
+  })
+  .catch((err) => {
+    console.log(err),
+      res.status(500).json({
+        error: err,
+      });
+  });
+
+  client.messages 
+      .create({ 
+         body: `Hola ${nombre}, Su cita se ha Agendado para el ${fecha}, a la hora ${hora} con el barbero seleccionado. Por favor no olvdidar de asistir.`, 
+         from: 'whatsapp:+14155238886',       
+         to:  `whatsapp:+57${telefono}` 
+       }) 
+      .then(message => console.log(message)) 
+      .done();
+
+
+}
 
 exports.allCitas = function (req, res) {
   Cita.find()
