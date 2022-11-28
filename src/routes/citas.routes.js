@@ -6,8 +6,8 @@ const authToken = 'c829d1617988648f974da87c7c557ef1';
 const client = require('twilio')(accountSid, authToken); 
  
 
-let Cita = require("../models/cita");
-let Barbero = require("../models/barbero");
+let Cita = require("../models/appointment");
+let Barbero = require("../models/barber");
 
 exports.createCita = (req, res) => {
   console.log(req.body);
