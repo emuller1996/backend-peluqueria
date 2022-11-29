@@ -9,7 +9,7 @@ const morgan = require('morgan');
 
 
 const barberRouter = require('./routes/barbero.routes');
-const citasR = require('./routes/citas.routes');
+const appointmentRouter = require('./routes/citas.routes');
 const servicesRouter = require('./routes/servicios.routes');
 
 
@@ -44,6 +44,8 @@ app.use(morgan('dev'));
 
 app.use('/barber', barberRouter);
 app.use('/services', servicesRouter);
+app.use('/appointment', appointmentRouter);
+
 
 
   /* app.post('/servicios',servciosR.createServicios);

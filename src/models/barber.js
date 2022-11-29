@@ -12,4 +12,4 @@ const barberSchema = new Schema({
     collection: 'barber',
     timestamps: true
 })
-module.exports = mongoose.model('Barber', barberSchema)
+module.exports = mongoose.model('barber', barberSchema)
