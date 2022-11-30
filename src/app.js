@@ -11,6 +11,7 @@ const morgan = require('morgan');
 const barberRouter = require('./routes/barbero.routes');
 const appointmentRouter = require('./routes/citas.routes');
 const servicesRouter = require('./routes/servicios.routes');
+const clientRouter = require('./routes/client.routes');
 
 
 mongoose
@@ -45,6 +46,8 @@ app.use(morgan('dev'));
 app.use('/barber', barberRouter);
 app.use('/services', servicesRouter);
 app.use('/appointment', appointmentRouter);
+app.use('/client', clientRouter);
+
 
 
 

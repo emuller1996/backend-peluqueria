@@ -7,8 +7,13 @@ const clientSchema = new Schema({
         type: String,
         required: true
       },
-    phoneNumber : Number
-
+    phoneNumber : {
+        type: Number,
+        required: true
+      },
+    email: String,
+    age : Number,
+    address :String
 }, {
     collection: 'client'
 })
