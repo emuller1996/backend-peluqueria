@@ -7,7 +7,7 @@ const barberSchema = new Schema({
     image:String,
     name: String,
     services : [{ type: Schema.Types.ObjectId, ref: 'services' }],
-    rol : String
+    role : String
 }, {
     collection: 'barber',
     timestamps: true
