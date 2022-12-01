@@ -5,6 +5,7 @@ let Client = require("../models/client");
 
 const createClient = async (req, res) => {
   const clienteNew = req.body;
+  
 
   //Validacion de Numero Telefonico
   const clientValidate = await Client.findOne({
@@ -18,6 +19,7 @@ const createClient = async (req, res) => {
 
   Object.assign(clienteNew, { _id: new mongoose.Types.ObjectId() });
   const client = new Client(clienteNew);
+  console.log(clienteNew)
   try {
     const result = await client.save();
 
