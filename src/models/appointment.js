@@ -3,12 +3,9 @@ const Schema = mongoose.Schema;
 
 const appointmentSchema = new Schema({
     _id: mongoose.Schema.Types.ObjectId, 
-    name: {
-        type: String,
-        required: true
-      },
     services : [{ type: Schema.Types.ObjectId, ref: 'services' }],
     barber_id : { type: Schema.Types.ObjectId, ref: 'barber' },
+    client_id : { type: Schema.Types.ObjectId, ref: 'client' },
     date : {
         type: Date,
         required: true

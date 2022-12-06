@@ -3,23 +3,53 @@ let express = require("express"),
 
 let Appointment = require("../models/appointment");
 
+const hours = [
+  { hour: "08:00 AM", state: true },
+  { hour: "08:30 AM", state: true },
+  { hour: "09:00 AM", state: true },
+  { hour: "09:30 AM", state: true },
+  { hour: "10:00 AM", state: true },
+  { hour: "10:30 AM", state: true },
+  { hour: "11:00 AM", state: true },
+  { hour: "11:30 AM", state: true },
+  { hour: "02:00 PM", state: true },
+  { hour: "02:30 PM", state: true },
+  { hour: "03:00 PM", state: true },
+  { hour: "03:30 PM", state: true },
+  { hour: "04:00 PM", state: true },
+  { hour: "04:30 PM", state: true },
+  { hour: "05:00 PM", state: true },
+  { hour: "05:30 PM", state: true },
+];
+
 const createAppointment = async (req, res) => {
   //console.log(req.body);
   const appointment = req.body;
 
+  if (!appointment.hasOwnProperty("client_id"))
+    return res.status(422).json({ error: `client_id no provided` });
   if (!appointment.hasOwnProperty("services"))
     return res.status(422).json({ error: `services no provided` });
   if (!appointment.hasOwnProperty("barber_id"))
     return res.status(422).json({ error: `barber_id no provided` });
 
-    //Validar Hora Disponible
-    try {
-        const result = await Appointment.find({barber_id :appointment.barber_id, date : appointment.date,hour : appointment.hour})
-        if(result.length>0) return res.status(406).json({message : 'the hour for your appointment with the barber is not available'}) 
-    } catch (error) {
-        return res.status(406).json({error : error.message})
-        
-    }
+  //Validar Hora Disponible
+  try {
+    const result = await Appointment.find({
+      barber_id: appointment.barber_id,
+      date: appointment.date,
+      hour: appointment.hour,
+    });
+    if (result.length > 0)
+      return res
+        .status(406)
+        .json({
+          message:
+            "the hour for your appointment with the barber is not available",
+        });
+  } catch (error) {
+    return res.status(406).json({ error: error.message });
+  }
 
   try {
     const AppointmentInsert = new Appointment(appointment);
@@ -34,14 +64,13 @@ const createAppointment = async (req, res) => {
 };
 
 const allAppointment = async (req, res) => {
-  console.log(req.body);
-  const date = req.body.date;
-  const barber_id = req.body.barber_id;
-
+  console.log(req.params);
+  const date = req.params.date;
+  const barber_id = req.params.id;
 
   let filter = {};
-  if(date) Object.assign(filter,{date})
-  if(barber_id) Object.assign(filter,{barber_id})
+  if (date) Object.assign(filter, { date });
+  if (barber_id) Object.assign(filter, { barber_id });
 
   const allAppointment = await Appointment.find(filter)
     .populate({
@@ -74,10 +103,39 @@ const changeStatusAppointment = async (req, res) => {
     .json({ message: "PACHT Appointment", params: req.params });
 };
 
+const getHoursAvailablePerDay = async (req, res) => {
+  console.log(req.params);
+  const date = req.params.date;
+  const barber_id = req.params.id;
+
+  let hoursAvailable = [];
+
+  let filter = {};
+  if (date) Object.assign(filter, { date });
+  if (barber_id) Object.assign(filter, { barber_id });
+
+  const allAppointment = await Appointment.find(filter).populate(
+    "barber_id",
+    "name"
+  );
+
+  const hoursBusy = allAppointment.map((a) => a.hour);
+
+  for (const hour of hours) {
+    console.log(hoursBusy.includes(hour.hour));
+    if (!hoursBusy.includes(hour.hour)) {
+      hoursAvailable.push(hour);
+    }
+  }
+
+  res.status(200).json({ hours: hoursAvailable });
+};
+
 module.exports = {
   createAppointment,
   allAppointment,
   changeStatusAppointment,
+  getHoursAvailablePerDay,
 };
 
 /* exports.allCitas = function (req, res) {
