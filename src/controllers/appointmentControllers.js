@@ -4,19 +4,19 @@ let express = require("express"),
 let Appointment = require("../models/appointment");
 
 const hours = [
-  { hour: "08:00 AM", state: true },
-  { hour: "08:30 AM", state: true },
-  { hour: "09:00 AM", state: true },
-  { hour: "09:30 AM", state: true },
-  { hour: "10:00 AM", state: true },
-  { hour: "10:30 AM", state: true },
-  { hour: "11:00 AM", state: true },
-  { hour: "11:30 AM", state: true },
-  { hour: "02:00 PM", state: true },
-  { hour: "02:30 PM", state: true },
-  { hour: "03:00 PM", state: true },
-  { hour: "03:30 PM", state: true },
-  { hour: "04:00 PM", state: true },
+  { hour: "08:00", state: true },
+  { hour: "08:30", state: true },
+  { hour: "09:00", state: true },
+  { hour: "09:30", state: true },
+  { hour: "10:00", state: true },
+  { hour: "10:30", state: true },
+  { hour: "11:00", state: true },
+  { hour: "11:30", state: true },
+  { hour: "14:00", state: true },
+  { hour: "02:30", state: true },
+  { hour: "03:00", state: true },
+  { hour: "03:30", state: true },
+  { hour: "04:00", state: true },
   { hour: "04:30 PM", state: true },
   { hour: "05:00 PM", state: true },
   { hour: "05:30 PM", state: true },
@@ -77,7 +77,11 @@ const allAppointment = async (req, res) => {
       path: "services",
       select: ["name", "price"],
     })
-    .populate("barber_id", "name");
+    .populate("barber_id", "name")
+    .populate("client_id", "name")
+    .sort({date:1});
+    
+
 
   res.status(200).json({ appointments: allAppointment });
 };
@@ -131,11 +135,29 @@ const getHoursAvailablePerDay = async (req, res) => {
   res.status(200).json({ hours: hoursAvailable });
 };
 
+const getAllAppointmentsbyDate = async (req, res) => {
+  const date = req.params.date;
+
+  const allAppointment = await Appointment.find({date})
+    .populate({
+      path: "services",
+      select: ["name", "price"],
+    })
+    .populate("barber_id", "name")
+    .populate("client_id", "name")
+    .sort({date:1});
+    
+
+
+  res.status(200).json({ appointments: allAppointment });
+}
+
 module.exports = {
   createAppointment,
   allAppointment,
   changeStatusAppointment,
   getHoursAvailablePerDay,
+  getAllAppointmentsbyDate
 };
 
 /* exports.allCitas = function (req, res) {

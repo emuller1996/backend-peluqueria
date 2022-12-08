@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
+require("dotenv").config();
 
 const cors = require("cors");
 const multer = require("multer");
@@ -12,6 +13,8 @@ const barberRouter = require('./routes/barbero.routes');
 const appointmentRouter = require('./routes/citas.routes');
 const servicesRouter = require('./routes/servicios.routes');
 const clientRouter = require('./routes/client.routes');
+const authRouter = require('./routes/auth.routes');
+
 
 
 mongoose
@@ -47,7 +50,7 @@ app.use('/barber', barberRouter);
 app.use('/services', servicesRouter);
 app.use('/appointment', appointmentRouter);
 app.use('/client', clientRouter);
-
+app.use('/auth', authRouter);
 
 
 

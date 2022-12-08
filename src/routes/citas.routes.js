@@ -3,11 +3,13 @@ const {
   createAppointment,
   allAppointment,
   changeStatusAppointment,
-  getHoursAvailablePerDay
+  getHoursAvailablePerDay,
+  getAllAppointmentsbyDate
 } = require("../controllers/appointmentControllers");
 const appointmentRouter = Router();
 
 appointmentRouter.get("/", allAppointment);
+appointmentRouter.get("/all/:date",getAllAppointmentsbyDate);
 appointmentRouter.get("/:id/:date", allAppointment);
 appointmentRouter.get("/hoursavailable/:id/:date", getHoursAvailablePerDay);
 appointmentRouter.post("/", createAppointment);
