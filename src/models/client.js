@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const mongoosePagination = require("mongoose-paginate-v2");
+
 
 const clientSchema = new Schema({
     _id: mongoose.Schema.Types.ObjectId, 
@@ -17,4 +19,5 @@ const clientSchema = new Schema({
 }, {
     collection: 'client'
 })
+clientSchema.plugin(mongoosePagination);
 module.exports = mongoose.model('client', clientSchema)
