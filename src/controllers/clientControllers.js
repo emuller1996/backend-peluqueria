@@ -52,7 +52,23 @@ const getClientByNumber = async (req, res) => {
   
 };
 
+const getAllClient = async(req, res) => {
+  const options = req.query;
+  Object.assign(options,{sort: 'name'})
+
+
+  try {
+    const clients = await Client.paginate({}, options);
+
+    return res.status(200).json({clients: clients});
+
+  } catch (error) {
+    return res.status(404).json({error: error.message});
+  }
+}
+
 module.exports = {
   createClient,
   getClientByNumber,
+  getAllClient
 };

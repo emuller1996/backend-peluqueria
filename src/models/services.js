@@ -5,7 +5,8 @@ const servicesSchema = new Schema({
     _id: mongoose.Schema.Types.ObjectId, 
     name: String,
     description : String,
-    price : Number
+    price : Number,
+    image : String,
 }, {
     collection: 'services'
 })
