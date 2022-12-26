@@ -11,6 +11,8 @@
     "bcryptjs": "^2.4.3"
   },
   "scripts": {
-    "start": "nodemon index"
+    "start": "node index",
+    "dev": "nodemon index"
+
   }
 }
