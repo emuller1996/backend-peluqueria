@@ -15,13 +15,17 @@ const servicesRouter = require('./routes/servicios.routes');
 const clientRouter = require('./routes/client.routes');
 const authRouter = require('./routes/auth.routes');
 
+const MONGOUSER = process.env.MONGOUSER;
+const MONGOPASSWORD = process.env.MONGOPASSWORD;
+const MONGOHOST = process.env.MONGOHOST;
+const MONGOPORT = process.env.MONGOPORT;
 
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/barberia")
+  .connect(`mongodb://${MONGOUSER}:${MONGOPASSWORD}@${MONGOHOST}:${ MONGOPORT}`)
   .then((x) => {
     console.log(
-      `Connected to Mongo! Database name: "${x.connections[0].name}"`
+      `Connected to Mongo! Database name: "${x.connections[0].name}", "${MONGOPORT}"`
     );
   })
   .catch((err) => {
