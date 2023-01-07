@@ -13,13 +13,13 @@ const hours = [
   { hour: "11:00", state: true },
   { hour: "11:30", state: true },
   { hour: "14:00", state: true },
-  { hour: "02:30", state: true },
-  { hour: "03:00", state: true },
-  { hour: "03:30", state: true },
-  { hour: "04:00", state: true },
-  { hour: "04:30 PM", state: true },
-  { hour: "05:00 PM", state: true },
-  { hour: "05:30 PM", state: true },
+  { hour: "14:30", state: true },
+  { hour: "15:00", state: true },
+  { hour: "15:30", state: true },
+  { hour: "16:00", state: true },
+  { hour: "16:30", state: true },
+  { hour: "17:00", state: true },
+  { hour: "17:30", state: true },
 ];
 
 const createAppointment = async (req, res) => {
@@ -69,7 +69,10 @@ const allAppointment = async (req, res) => {
   const barber_id = req.params.id;
 
   let filter = {};
-  if (date) Object.assign(filter, { date });
+  if (date) Object.assign(filter, { date : {
+    $gte: `${date}T00:00:00.000Z`,
+    $lte: `${date}T23:59:00.000Z`
+  } });
   if (barber_id) Object.assign(filter, { barber_id });
 
   const allAppointment = await Appointment.find(filter)
@@ -138,7 +141,11 @@ const getHoursAvailablePerDay = async (req, res) => {
 const getAllAppointmentsbyDate = async (req, res) => {
   const date = req.params.date;
 
-  const allAppointment = await Appointment.find({date})
+  const allAppointment = await Appointment.find({date : 
+    {
+      $gte: `${date}T00:00:00.000Z`,
+      $lte: `${date}T23:59:00.000Z`
+    }})
     .populate({
       path: "services",
       select: ["name", "price"],
