@@ -118,7 +118,10 @@ const getHoursAvailablePerDay = async (req, res) => {
   let hoursAvailable = [];
 
   let filter = {};
-  if (date) Object.assign(filter, { date });
+  if (date) Object.assign(filter, { date : {
+    $gte: `${date}T00:00:00.000Z`,
+    $lte: `${date}T23:59:00.000Z`
+  } });
   if (barber_id) Object.assign(filter, { barber_id });
 
   const allAppointment = await Appointment.find(filter).populate(
