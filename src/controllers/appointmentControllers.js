@@ -20,7 +20,7 @@ const hours = [
   { hour: "16:30", state: true },
   { hour: "17:00", state: true },
   { hour: "17:30", state: true },
-];
+]
 
 const createAppointment = async (req, res) => {
   //console.log(req.body);
@@ -88,6 +88,21 @@ const allAppointment = async (req, res) => {
 
   res.status(200).json({ appointments: allAppointment });
 };
+
+const getAppointment = async (req, res) => {
+  const appointment_id = req.params.id;
+
+  const comfirmationAppointment = await Appointment.findOne({_id : appointment_id})
+    .populate({
+      path: "services",
+      select: ["name", "price"],
+    })
+    .populate("barber_id")
+    .populate("client_id", "name")
+
+
+    res.status(200).json({ appointment: comfirmationAppointment });
+}
 
 const changeStatusAppointment = async (req, res) => {
   const id = req.params.id;
@@ -167,7 +182,8 @@ module.exports = {
   allAppointment,
   changeStatusAppointment,
   getHoursAvailablePerDay,
-  getAllAppointmentsbyDate
+  getAllAppointmentsbyDate,
+  getAppointment
 };
 
 /* exports.allCitas = function (req, res) {
