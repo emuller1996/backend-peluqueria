@@ -65,11 +65,25 @@ const logout = async (req, res) => {
   res.status(200).send({ auth: false, token: null });
 };
 
+const validate = async (req,res) =>{
+  console.log('validate')
+
+  const token = req.headers["x-access-token"];
+
+  // if does not exists a token
+  if (!token) {
+    return res
+      .status(401)
+      .send({ auth: false, message: "No Token aws Provided" });
+  }
+
+}
+
 module.exports = {
     signupController,
     getProfile,
     signinController,
-    logout
-
+    logout,
+    validate
   };
   

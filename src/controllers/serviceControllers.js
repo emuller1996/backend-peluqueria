@@ -45,6 +45,7 @@ const editService = async function (req, res) {
   const { serviceUpdated } = req.body;
   console.log(serviceUpdated);
 
+  
   const result = await servicesModel.findByIdAndUpdate(
     { _id: id },
     { $set: serviceUpdated },
