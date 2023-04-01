@@ -15,8 +15,8 @@ const verifyToken = async (req, res, next) =>  {
   }
 
   // decode the token
-  const decoded = await jwt.verify(token, SECRET);
-
+  const decoded = await jwt.verify(token, process.env.SECRET);
+  console.log(decoded);
   // save the token on request object to using on routes
   req.userId = decoded.id;
 
