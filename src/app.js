@@ -22,7 +22,7 @@ const MONGOPORT = process.env.MONGOPORT;
 
 
 mongoose
-  .connect(`mongodb://${MONGOUSER}:${MONGOPASSWORD}@${MONGOHOST}:${ MONGOPORT}`)
+  .connect(`mongodb://${MONGOHOST}:${ MONGOPORT}/barberia`)
   .then((x) => {
     console.log(
       `Connected to Mongo! Database name: "${x.connections[0].name}", "${MONGOPORT}"`
