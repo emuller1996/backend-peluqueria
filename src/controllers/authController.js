@@ -1,8 +1,8 @@
-const jwt  = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const SECRET = process.env.SECRET
+const SECRET = process.env.SECRET;
 
- const signupController = async (req, res) => {
+const signupController = async (req, res) => {
   try {
     // Receiving Data
     const { username, email, password } = req.body;
@@ -43,7 +43,7 @@ const getProfile = async (req, res) => {
 };
 
 const signinController = async (req, res) => {
-  console.log(req.body)
+  console.log(req.body);
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return res.status(404).send("The email doesn't exists");
@@ -65,8 +65,8 @@ const logout = async (req, res) => {
   res.status(200).send({ auth: false, token: null });
 };
 
-const validate = async (req,res) =>{
-  console.log('validate')
+const validate = async (req, res) => {
+  //console.log("validate");
 
   const token = req.headers["x-access-token"];
 
@@ -75,15 +75,15 @@ const validate = async (req,res) =>{
     return res
       .status(401)
       .send({ auth: false, message: "No Token aws Provided" });
+  } else {
+    return res.status(200).json({ token });
   }
-
-}
+};
 
 module.exports = {
-    signupController,
-    getProfile,
-    signinController,
-    logout,
-    validate
-  };
-  
+  signupController,
+  getProfile,
+  signinController,
+  logout,
+  validate,
+};
