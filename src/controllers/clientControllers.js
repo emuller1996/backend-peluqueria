@@ -5,7 +5,6 @@ let Client = require("../models/client");
 
 const createClient = async (req, res) => {
   const clienteNew = req.body;
-  
 
   //Validacion de Numero Telefonico
   const clientValidate = await Client.findOne({
@@ -19,7 +18,7 @@ const createClient = async (req, res) => {
 
   Object.assign(clienteNew, { _id: new mongoose.Types.ObjectId() });
   const client = new Client(clienteNew);
-  console.log(clienteNew)
+  console.log(clienteNew);
   try {
     const result = await client.save();
 
@@ -39,36 +38,53 @@ const getClientByNumber = async (req, res) => {
 
   console.log(client);
   if (client) {
-    return res.status(200).json({ 
-        message: "cliente Encontrado", 
-        client: client 
+    return res.status(200).json({
+      message: "cliente Encontrado",
+      client: client,
     });
-  }else{
+  } else {
     return res.status(406).json({
-        message: "Client not registred",
-      });
+      message: "Client not registred",
+    });
   }
-
-  
 };
 
-const getAllClient = async(req, res) => {
+const getAllClient = async (req, res) => {
   const options = req.query;
-  Object.assign(options,{sort: 'name'})
-
+  Object.assign(options, { sort: "name" });
 
   try {
     const clients = await Client.paginate({}, options);
 
-    return res.status(200).json({clients: clients});
-
+    return res.status(200).json({ clients: clients });
   } catch (error) {
-    return res.status(404).json({error: error.message});
+    return res.status(404).json({ error: error.message });
   }
-}
+};
 
+const updateClient = async (req, res) => {
+  const { id } = req.body;
+
+  const { client } = req.body;
+  console.log(client);
+
+  try {
+    const result = await Client.findByIdAndUpdate(
+      { _id: id },
+      { $set: client },
+      { new: true }
+    );
+    res
+      .status(200)
+      .json({ message: "Se Actualizo sus datos Correctamente."});
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+  
+};
 module.exports = {
   createClient,
   getClientByNumber,
-  getAllClient
+  getAllClient,
+  updateClient
 };
