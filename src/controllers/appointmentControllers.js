@@ -4,23 +4,23 @@ let express = require("express"),
 let Appointment = require("../models/appointment");
 
 const hours = [
-  { hour: "08:00", state: true },
-  { hour: "08:30", state: true },
-  { hour: "09:00", state: true },
-  { hour: "09:30", state: true },
-  { hour: "10:00", state: true },
-  { hour: "10:30", state: true },
-  { hour: "11:00", state: true },
-  { hour: "11:30", state: true },
-  { hour: "14:00", state: true },
-  { hour: "14:30", state: true },
-  { hour: "15:00", state: true },
-  { hour: "15:30", state: true },
-  { hour: "16:00", state: true },
-  { hour: "16:30", state: true },
-  { hour: "17:00", state: true },
-  { hour: "17:30", state: true },
-]
+  { hour: "08:00", view: "08:00 am" },
+  { hour: "08:30", view: "08:30 am" },
+  { hour: "09:00", view: "09:00 am" },
+  { hour: "09:30", view: "09:30 am" },
+  { hour: "10:00", view: "10:00 am" },
+  { hour: "10:30", view: "10:30 am" },
+  { hour: "11:00", view: "11:00 am" },
+  { hour: "11:30", view: "11:30 am" },
+  { hour: "14:00", view: "02:00 pm" },
+  { hour: "14:30", view: "02:30 pm" },
+  { hour: "15:00", view: "03:00 pm" },
+  { hour: "15:30", view: "03:30 pm" },
+  { hour: "16:00", view: "04:00 pm" },
+  { hour: "16:30", view: "04:30 pm" },
+  { hour: "17:00", view: "05:00 pm" },
+  { hour: "17:30", view: "05:30 pm" },
+];
 
 const createAppointment = async (req, res) => {
   //console.log(req.body);
@@ -41,12 +41,10 @@ const createAppointment = async (req, res) => {
       hour: appointment.hour,
     });
     if (result.length > 0)
-      return res
-        .status(406)
-        .json({
-          message:
-            "the hour for your appointment with the barber is not available",
-        });
+      return res.status(406).json({
+        message:
+          "the hour for your appointment with the barber is not available",
+      });
   } catch (error) {
     return res.status(406).json({ error: error.message });
   }
@@ -69,10 +67,13 @@ const allAppointment = async (req, res) => {
   const barber_id = req.params.id;
 
   let filter = {};
-  if (date) Object.assign(filter, { date : {
-    $gte: `${date}T00:00:00.000Z`,
-    $lte: `${date}T23:59:00.000Z`
-  } });
+  if (date)
+    Object.assign(filter, {
+      date: {
+        $gte: `${date}T00:00:00.000Z`,
+        $lte: `${date}T23:59:00.000Z`,
+      },
+    });
   if (barber_id) Object.assign(filter, { barber_id });
 
   const allAppointment = await Appointment.find(filter)
@@ -82,9 +83,7 @@ const allAppointment = async (req, res) => {
     })
     .populate("barber_id", "name")
     .populate("client_id", "name")
-    .sort({date:1});
-    
-
+    .sort({ date: 1 });
 
   res.status(200).json({ appointments: allAppointment });
 };
@@ -92,17 +91,18 @@ const allAppointment = async (req, res) => {
 const getAppointment = async (req, res) => {
   const appointment_id = req.params.id;
 
-  const comfirmationAppointment = await Appointment.findOne({_id : appointment_id})
+  const comfirmationAppointment = await Appointment.findOne({
+    _id: appointment_id,
+  })
     .populate({
       path: "services",
       select: ["name", "price"],
     })
     .populate("barber_id")
-    .populate("client_id", "name")
+    .populate("client_id", "name");
 
-
-    res.status(200).json({ appointment: comfirmationAppointment });
-}
+  res.status(200).json({ appointment: comfirmationAppointment });
+};
 
 const changeStatusAppointment = async (req, res) => {
   const id = req.params.id;
@@ -133,10 +133,13 @@ const getHoursAvailablePerDay = async (req, res) => {
   let hoursAvailable = [];
 
   let filter = {};
-  if (date) Object.assign(filter, { date : {
-    $gte: `${date}T00:00:00.000Z`,
-    $lte: `${date}T23:59:00.000Z`
-  } });
+  if (date)
+    Object.assign(filter, {
+      date: {
+        $gte: `${date}T00:00:00.000Z`,
+        $lte: `${date}T23:59:00.000Z`,
+      },
+    });
   if (barber_id) Object.assign(filter, { barber_id });
 
   const allAppointment = await Appointment.find(filter).populate(
@@ -159,23 +162,48 @@ const getHoursAvailablePerDay = async (req, res) => {
 const getAllAppointmentsbyDate = async (req, res) => {
   const date = req.params.date;
 
-  const allAppointment = await Appointment.find({date : 
-    {
+  const allAppointment = await Appointment.find({
+    date: {
       $gte: `${date}T00:00:00.000Z`,
-      $lte: `${date}T23:59:00.000Z`
-    }})
+      $lte: `${date}T23:59:00.000Z`,
+    },
+  })
     .populate({
       path: "services",
       select: ["name", "price"],
     })
     .populate("barber_id", "name")
     .populate("client_id", "name")
-    .sort({date:1});
-    
-
+    .sort({ date: 1 });
 
   res.status(200).json({ appointments: allAppointment });
-}
+};
+
+const getAllAppointmentsbyClient = async (req, res) => {
+  try {
+    const client_id = req.params.id;
+
+    const allAppointment = await Appointment.paginate(
+      { client_id: client_id },
+      {
+        limit: 3,
+        page: req.query.page,
+        populate: ["services", "barber_id"],
+        sort: { date: -1 },
+      }
+    );
+    /* .populate({
+        path: "services",
+        select: ["name", "price"],
+      })
+      .populate("barber_id", "name")
+      .sort({ date: -1 }); */
+
+    res.status(200).json(allAppointment);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 module.exports = {
   createAppointment,
@@ -183,7 +211,8 @@ module.exports = {
   changeStatusAppointment,
   getHoursAvailablePerDay,
   getAllAppointmentsbyDate,
-  getAppointment
+  getAppointment,
+  getAllAppointmentsbyClient,
 };
 
 /* exports.allCitas = function (req, res) {

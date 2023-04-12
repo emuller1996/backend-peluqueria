@@ -75,6 +75,8 @@ const validate = async (req,res) =>{
     return res
       .status(401)
       .send({ auth: false, message: "No Token aws Provided" });
+  } else {
+    return res.status(200).json({ token });
   }
 
 }
