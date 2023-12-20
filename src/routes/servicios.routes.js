@@ -1,6 +1,6 @@
-const { Router } = require('express');
-const { allServicios, createServicios, editService,getServices } = require("../controllers/serviceControllers")
-const { verifyToken } = require("../libs/verifyToken")
+import { Router } from 'express';
+import { allServicios, createServicios, editService, getServices } from "../controllers/serviceControllers.js";
+import { verifyToken } from "../libs/verifyToken.js";
 const servicesRouter = Router();
 
 
@@ -12,4 +12,4 @@ servicesRouter.put('/', verifyToken,editService);
 
 
 
-module.exports = servicesRouter;
+export default servicesRouter;

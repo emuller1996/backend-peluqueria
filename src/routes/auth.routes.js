@@ -1,12 +1,6 @@
-const { Router } = require("express");
-const {
-  signinController,
-  signupController,
-  getProfile,
-  logout,
-  validate,
-} = require("../controllers/authController");
-const { verifyToken } = require("../libs/verifyToken");
+import { Router } from "express";
+import { signinController, signupController, getProfile, logout, validate } from "../controllers/authController.js";
+import { verifyToken } from "../libs/verifyToken.js";
 
 const router = Router();
 
@@ -19,4 +13,4 @@ router.get("/logout", logout);
 
 router.get("/me", verifyToken, getProfile);
 
-module.exports = router;
+export default router;

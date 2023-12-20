@@ -1,8 +1,10 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+import jsonwebtoken from "jsonwebtoken";
+const { sign } = jsonwebtoken;
+import User from "../models/user.js";
+import dotenv from "dotenv";
+dotenv.config();
 const SECRET = process.env.SECRET;
-
-const signupController = async (req, res) => {
+export const signupController = async (req, res) => {
   try {
     // Receiving Data
     const { username, email, password } = req.body;
@@ -20,7 +22,7 @@ const signupController = async (req, res) => {
     await user.save();
 
     // Create a Token
-    const token = jwt.sign({ id: user._id }, SECRET, {
+    const token = sign({ id: user._id }, SECRET, {
       expiresIn: 60 * 60 * 24, // expires in 24 hours
     });
 
@@ -31,7 +33,7 @@ const signupController = async (req, res) => {
   }
 };
 
-const getProfile = async (req, res) => {
+export const getProfile = async (req, res) => {
   // res.status(200).send(decoded);
   // Search the Info base on the ID
   // const user = await User.findById(decoded.id, { password: 0});
@@ -42,7 +44,7 @@ const getProfile = async (req, res) => {
   res.status(200).json(user);
 };
 
-const signinController = async (req, res) => {
+export const signinController = async (req, res) => {
   console.log(req.body);
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
@@ -55,17 +57,17 @@ const signinController = async (req, res) => {
   if (!validPassword) {
     return res.status(401).send({ auth: false, token: null });
   }
-  const token = jwt.sign({ id: user._id }, SECRET, {
+  const token = sign({ id: user._id }, SECRET, {
     expiresIn: 60 * 60 * 24,
   });
   res.status(200).json({ auth: true, token });
 };
 
-const logout = async (req, res) => {
+export const logout = async (req, res) => {
   res.status(200).send({ auth: false, token: null });
 };
 
-const validate = async (req, res) => {
+export const validate = async (req, res) => {
   //console.log("validate");
 
   const token = req.headers["x-access-token"];
@@ -80,7 +82,7 @@ const validate = async (req, res) => {
   }
 };
 
-module.exports = {
+export default {
   signupController,
   getProfile,
   signinController,

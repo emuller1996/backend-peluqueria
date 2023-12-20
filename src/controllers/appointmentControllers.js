@@ -1,7 +1,8 @@
-let express = require("express"),
-  mongoose = require("mongoose");
+import express from "express";
+import mongoose from "mongoose";
+const { Types } = mongoose;
 
-let Appointment = require("../models/appointment");
+import Appointment from "../models/appointment.js";
 
 const hours = [
   { hour: "08:00", view: "08:00 am" },
@@ -22,7 +23,7 @@ const hours = [
   { hour: "17:30", view: "05:30 pm" },
 ];
 
-const createAppointment = async (req, res) => {
+export const createAppointment = async (req, res) => {
   //console.log(req.body);
   const appointment = req.body;
 
@@ -51,7 +52,7 @@ const createAppointment = async (req, res) => {
 
   try {
     const AppointmentInsert = new Appointment(appointment);
-    Object.assign(AppointmentInsert, { _id: new mongoose.Types.ObjectId() });
+    Object.assign(AppointmentInsert, { _id: new Types.ObjectId() });
     const result = await AppointmentInsert.save();
     return res
       .status(201)
@@ -61,7 +62,7 @@ const createAppointment = async (req, res) => {
   }
 };
 
-const allAppointment = async (req, res) => {
+export const allAppointment = async (req, res) => {
   console.log(req.params);
   const date = req.params.date;
   const barber_id = req.params.id;
@@ -88,7 +89,7 @@ const allAppointment = async (req, res) => {
   res.status(200).json({ appointments: allAppointment });
 };
 
-const getAppointment = async (req, res) => {
+export const getAppointment = async (req, res) => {
   const appointment_id = req.params.id;
 
   const comfirmationAppointment = await Appointment.findOne({
@@ -104,7 +105,7 @@ const getAppointment = async (req, res) => {
   res.status(200).json({ appointment: comfirmationAppointment });
 };
 
-const changeStatusAppointment = async (req, res) => {
+export const changeStatusAppointment = async (req, res) => {
   const id = req.params.id;
   const state = req.params.state;
 
@@ -125,7 +126,7 @@ const changeStatusAppointment = async (req, res) => {
     .json({ message: "PACHT Appointment", params: req.params });
 };
 
-const getHoursAvailablePerDay = async (req, res) => {
+export const getHoursAvailablePerDay = async (req, res) => {
   console.log(req.params);
   const date = req.params.date;
   const barber_id = req.params.id;
@@ -159,7 +160,7 @@ const getHoursAvailablePerDay = async (req, res) => {
   res.status(200).json({ hours: hoursAvailable });
 };
 
-const getAllAppointmentsbyDate = async (req, res) => {
+export const getAllAppointmentsbyDate = async (req, res) => {
   const date = req.params.date;
 
   const allAppointment = await Appointment.find({
@@ -179,7 +180,7 @@ const getAllAppointmentsbyDate = async (req, res) => {
   res.status(200).json({ appointments: allAppointment });
 };
 
-const getAllAppointmentsbyClient = async (req, res) => {
+export const getAllAppointmentsbyClient = async (req, res) => {
   try {
     const client_id = req.params.id;
 
@@ -205,7 +206,7 @@ const getAllAppointmentsbyClient = async (req, res) => {
   }
 };
 
-module.exports = {
+/* export default {
   createAppointment,
   allAppointment,
   changeStatusAppointment,
@@ -213,7 +214,7 @@ module.exports = {
   getAllAppointmentsbyDate,
   getAppointment,
   getAllAppointmentsbyClient,
-};
+}; */
 
 /* exports.allCitas = function (req, res) {
     Cita.find()

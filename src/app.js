@@ -1,28 +1,29 @@
-const express = require("express");
-const bodyParser = require("body-parser");
+import express, { static as static_ } from "express";
+import body_parser from "body-parser";
+const { json, urlencoded } = body_parser;
 const app = express();
-require("dotenv").config();
 
-const cors = require("cors");
-const multer = require("multer");
-const mongoose = require("mongoose");
-const morgan = require('morgan');
+import dotenv from "dotenv";
+dotenv.config();
 
+import cors from "cors";
+import mongoose from "mongoose";
 
-const barberRouter = require('./routes/barbero.routes');
-const appointmentRouter = require('./routes/citas.routes');
-const servicesRouter = require('./routes/servicios.routes');
-const clientRouter = require('./routes/client.routes');
-const authRouter = require('./routes/auth.routes');
+import morgan from "morgan";
 
+import barberRouter from "./routes/barbero.routes.js";
+import appointmentRouter from "./routes/citas.routes.js";
+import servicesRouter from "./routes/servicios.routes.js";
+import clientRouter from "./routes/client.routes.js";
+import authRouter from "./routes/auth.routes.js";
+
+const { connect } = mongoose;
 const MONGOUSER = process.env.MONGOUSER;
 const MONGOPASSWORD = process.env.MONGOPASSWORD;
 const MONGOHOST = process.env.MONGOHOST;
 const MONGOPORT = process.env.MONGOPORT;
 
-
-mongoose
-  .connect(`mongodb://${MONGOHOST}:${ MONGOPORT}/barberia`)
+connect(`mongodb://${MONGOHOST}:${MONGOPORT}/barberia`)
   .then((x) => {
     console.log(
       `Connected to Mongo! Database name: "${x.connections[0].name}", "${MONGOPORT}"`
@@ -32,38 +33,22 @@ mongoose
     console.error("Error connecting to mongo", err.reason);
   });
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "./public/images/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-
-const upload = multer({ storage: storage });
-app.use("/public", express.static("public"));
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(morgan('dev'));
+app.use(json());
+app.use(urlencoded({ extended: true }));
+app.use(morgan("dev"));
 
+app.use("/barber", barberRouter);
+app.use("/services", servicesRouter);
+app.use("/appointment", appointmentRouter);
+app.use("/client", clientRouter);
+app.use("/auth", authRouter);
 
-
-app.use('/barber', barberRouter);
-app.use('/services', servicesRouter);
-app.use('/appointment', appointmentRouter);
-app.use('/client', clientRouter);
-app.use('/auth', authRouter);
-
-
-
-  /* app.post('/servicios',servciosR.createServicios);
+/* app.post('/servicios',servciosR.createServicios);
   app.get('/servicios',servciosR.allServicios);
  */
 /* app.post("/create-barber", upload.single("file"), barberoR.create);
 app.get("/all-barberos",barberoR.allBarber); */
-
 
 /* let Cita = require("./models/appointment");
 app.post("/citas",citasR.createCita );
@@ -74,16 +59,15 @@ app.put('/update-cita/:id/:estado',citasR.editCitas);
 app.get('/citasDisponibleBarbero',citasR.citasDisponibleBarbero);
  */
 
-
-
-app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+app.use((err, req, res, next) => {
+  // eslint-disable-line no-unused-vars
   const status = err.status || 500;
   const message = err.message || err;
   console.error(err);
   return res.status(status).send(message);
 });
 
-module.exports = app;
+export default app;
 
 /* app.listen(port,() => {
   console.log(`listening at http://localhost:${port}`);

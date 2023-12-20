@@ -1,9 +1,10 @@
-let express = require("express"),
-  mongoose = require("mongoose");
+import express from "express";
+import mongoose from "mongoose";
+const { Types } = mongoose;
 
-let Client = require("../models/client");
+import Client from "../models/client.js";
 
-const createClient = async (req, res) => {
+export const createClient = async (req, res) => {
   const clienteNew = req.body;
 
   //Validacion de Numero Telefonico
@@ -16,7 +17,7 @@ const createClient = async (req, res) => {
       .json({ message: "Numero de Telefono ya esta registrado" });
   //Validacion de Numero Telefonico
 
-  Object.assign(clienteNew, { _id: new mongoose.Types.ObjectId() });
+  Object.assign(clienteNew, { _id: new Types.ObjectId() });
   const client = new Client(clienteNew);
   console.log(clienteNew);
   try {
@@ -31,7 +32,7 @@ const createClient = async (req, res) => {
   }
 };
 
-const getClientByNumber = async (req, res) => {
+export const getClientByNumber = async (req, res) => {
   console.log(req.params.id);
 
   const client = await Client.findOne({ phoneNumber: req.params.id });
@@ -49,7 +50,7 @@ const getClientByNumber = async (req, res) => {
   }
 };
 
-const getAllClient = async (req, res) => {
+export const getAllClient = async (req, res) => {
   const options = req.query;
   Object.assign(options, { sort: "name" });
 
@@ -62,7 +63,7 @@ const getAllClient = async (req, res) => {
   }
 };
 
-const updateClient = async (req, res) => {
+export const updateClient = async (req, res) => {
   const { id } = req.body;
 
   const { client } = req.body;
@@ -74,17 +75,8 @@ const updateClient = async (req, res) => {
       { $set: client },
       { new: true }
     );
-    res
-      .status(200)
-      .json({ message: "Se Actualizo sus datos Correctamente."});
+    res.status(200).json({ message: "Se Actualizo sus datos Correctamente." });
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
-  
-};
-module.exports = {
-  createClient,
-  getClientByNumber,
-  getAllClient,
-  updateClient
 };

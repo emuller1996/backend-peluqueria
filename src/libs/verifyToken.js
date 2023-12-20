@@ -1,9 +1,8 @@
-const jwt = require("jsonwebtoken");
-const SECRET = require("../config")
+import jsonwebtoken from "jsonwebtoken";
+const { verify } = jsonwebtoken;
+import SECRET from "../config.js";
 
-
-
-const verifyToken = async (req, res, next) =>  {
+export const verifyToken = async (req, res, next) => {
   // Get the token from the headers
   const token = req.headers["x-access-token"];
 
@@ -15,15 +14,11 @@ const verifyToken = async (req, res, next) =>  {
   }
 
   // decode the token
-  const decoded = await jwt.verify(token, process.env.SECRET);
+  const decoded = await verify(token, process.env.SECRET);
   console.log(decoded);
   // save the token on request object to using on routes
   req.userId = decoded.id;
 
   // continue with the next function
   next();
-}
-
-module.exports = {
-    verifyToken
-}
+};

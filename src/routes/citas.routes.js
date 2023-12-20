@@ -1,14 +1,6 @@
-const { Router } = require("express");
-const {
-  createAppointment,
-  allAppointment,
-  changeStatusAppointment,
-  getHoursAvailablePerDay,
-  getAllAppointmentsbyDate,
-  getAppointment,
-  getAllAppointmentsbyClient
-} = require("../controllers/appointmentControllers");
-const { verifyToken } = require("../libs/verifyToken");
+import { Router } from "express";
+import { createAppointment, allAppointment, changeStatusAppointment, getHoursAvailablePerDay, getAllAppointmentsbyDate, getAppointment, getAllAppointmentsbyClient } from "../controllers/appointmentControllers.js";
+import { verifyToken } from "../libs/verifyToken.js";
 const appointmentRouter = Router();
 
 appointmentRouter.get("/", allAppointment);
@@ -20,4 +12,4 @@ appointmentRouter.get("/hoursavailable/:id/:date", getHoursAvailablePerDay);
 appointmentRouter.post("/", createAppointment);
 appointmentRouter.patch("/:id/:state", verifyToken, changeStatusAppointment);
 
-module.exports = appointmentRouter;
+export default appointmentRouter;

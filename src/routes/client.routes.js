@@ -1,10 +1,5 @@
-const { Router } = require("express");
-const {
-    createClient,
-    getClientByNumber,
-    getAllClient,
-    updateClient
-  } = require("../controllers/clientControllers");
+import { Router } from "express";
+import { createClient, getClientByNumber, getAllClient, updateClient } from "../controllers/clientControllers.js";
 
 const clientRouter = Router();
 
@@ -17,4 +12,4 @@ clientRouter.put('/',updateClient)
 
 
 
-module.exports = clientRouter;
+export default clientRouter;
