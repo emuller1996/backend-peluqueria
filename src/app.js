@@ -23,7 +23,7 @@ const MONGOPASSWORD = process.env.MONGOPASSWORD;
 const MONGOHOST = process.env.MONGOHOST;
 const MONGOPORT = process.env.MONGOPORT;
 
-connect(`mongodb://${MONGOHOST}:${MONGOPORT}/barberia`)
+connect(`mongodb+srv://emuller:YUbgSbNCGAfl7QEt@barber.a34etpi.mongodb.net/barber`)
   .then((x) => {
     console.log(
       `Connected to Mongo! Database name: "${x.connections[0].name}", "${MONGOPORT}"`
