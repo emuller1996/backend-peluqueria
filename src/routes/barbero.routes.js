@@ -10,7 +10,7 @@ const barberRouter = Router();
 
 barberRouter.get("/", allBarbers);
 barberRouter.get("/:id", getBarber);
-barberRouter.post("/", verifyToken, create);
-barberRouter.put("/:id", verifyToken, updateBarber);
+barberRouter.post("/", /* verifyToken, */ create);
+barberRouter.put("/:id", /* verifyToken, */ updateBarber);
 
 export default barberRouter;

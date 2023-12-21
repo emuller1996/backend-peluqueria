@@ -6,8 +6,8 @@ const servicesRouter = Router();
 
 servicesRouter.get('/', allServicios);
 servicesRouter.get('/:id', getServices);
-servicesRouter.post('/',verifyToken, createServicios);
-servicesRouter.put('/', verifyToken,editService);
+servicesRouter.post('/', createServicios);
+servicesRouter.put('/', editService);
 
 
 
